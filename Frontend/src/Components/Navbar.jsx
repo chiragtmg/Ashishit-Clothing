@@ -11,7 +11,7 @@ const Navbar = () => {
 
 	// Placeholder – replace with real cart logic (e.g. CartContext) later
 	const cartCount = 10;
-	console.log(currentUser);
+	// console.log(currentUser);
 
 	const isActive = (path) => location.pathname === path;
 

@@ -8,13 +8,13 @@ const EditProfile = () => {
 	const { updateUser, currentUser } = useContext(AuthContext);
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
-		name: currentUser?.name || "",
+		username: currentUser?.username || "",
 		email: currentUser?.email || "",
 		avatar: currentUser?.avatar || "",
 	});
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	console.log(currentUser);
+	// console.log(currentUser);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -51,7 +51,7 @@ const EditProfile = () => {
 					<h2 className="text-3xl font-bold text-gray-900 tracking-tight">
 						Edit Profile
 					</h2>
-					<p className="mt-2 text-sm text-gray-600">It's quick and easy.</p>
+					<p className="mt-2 text-sm text-gray-600">Edit Your Profile</p>
 				</div>
 				{error && (
 					<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
@@ -92,7 +92,7 @@ const EditProfile = () => {
 								id="username"
 								type="text"
 								name="username"
-								value={formData.name}
+								value={formData.username}
 								onChange={handleChange}
 								className="block w-full px-4 py-3 rounded-lg border border-gray-300 
                            placeholder:text-gray-400 

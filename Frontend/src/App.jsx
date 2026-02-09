@@ -12,8 +12,7 @@ import Orders from "./Pages/Orders";
 import Navbar from "./Components/Navbar";
 import { ToastContainer } from "react-toastify";
 import EditProfile from "./Pages/EditProfile";
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import SignUp from "./Pages/SignUp";
 
 const App = () => {
 	return (
@@ -28,6 +27,7 @@ const App = () => {
 				<Route path="/product/:productId" element={<Product />} />
 				<Route path="/cart" element={<Cart />} />
 				<Route path="/login" element={<Login />} />
+				<Route path="/signup" element={<SignUp />} />
 				<Route path="/place-order" element={<PlaceOrder />} />
 				<Route path="/orders" element={<Orders />} />
 				<Route path="/editProfile" element={<EditProfile />} />

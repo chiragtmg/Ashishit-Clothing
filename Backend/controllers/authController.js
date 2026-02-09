@@ -10,21 +10,19 @@ const createToken = (id) => {
 
 // Route for the user login
 const loginUser = async (req, res) => {
+	const { email, password } = req.body;
 	try {
-		const { email, password } = req.body;
-
 		const user = await userModel.findOne({ email });
 
 		if (!user) {
-			return res.json({ success: false, message: "User doesnot exist" });
+			return res
+				.status(401)
+				.json({ success: false, message: "User doesnot exist" });
 		}
 
 		const isMatch = await bcrypt.compare(password, user.password);
-		if (isMatch) {
-			const token = createToken(user._id);
-			res.json({ success: true, token });
-		} else {
-			res.json({ success: false, message: "Invalid credentials" });
+		if (!isMatch) {
+			return res.status(401).json({ msg: "Invalid credentials" });
 		}
 		// Generate JWT token
 		const age = 1000 * 60 * 60 * 24 * 7; // 1 week
@@ -36,7 +34,7 @@ const loginUser = async (req, res) => {
 				avatar: user.avatar,
 				isAdmin: false,
 			},
-			process.env.JWT_SECRET_KEY,
+			process.env.JWT_SECRET,
 			{ expiresIn: age },
 		);
 
@@ -59,16 +57,16 @@ const loginUser = async (req, res) => {
 			.status(200)
 			.json(userInfo);
 	} catch (error) {
-		console.log(error);
-		res.json({ success: false, message: error.message });
+		res.status(500).json({ msg: "Internal server error" });
+		console.error(error);
 	}
 };
 
 //route for the user registration
 const registerUser = async (req, res) => {
-	try {
-		const { name, email, password } = req.body;
+	const { username, email, password } = req.body;
 
+	try {
 		//for checking email exist or not
 		const exists = await userModel.findOne({ email });
 
@@ -87,33 +85,35 @@ const registerUser = async (req, res) => {
 			});
 		}
 
-		//hasing for password
-		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(password, salt);
+		const hashedPassword = await bcrypt.hash(password, 10);
 
-		//creating new user
-		const newUser = new userModel({
-			name,
+		const newUser = await userModel.create({
 			email,
 			password: hashedPassword,
+			username,
 		});
 
-		//saving in database
-		const user = await newUser.save();
+		//Create user response object
+		const userResponse = {
+			_id: newUser._id,
+			username: newUser.username,
+			email: newUser.email,
+			avatar: newUser.avatar,
+			createdAt: newUser.createdAt,
+			updatedAt: newUser.updatedAt,
+		};
 
-		//creating token to use app
-		const token = createToken(user._id);
-
-		res.json({ success: true, token });
+		res
+			.status(201)
+			.json({ message: "User registered successfully", userResponse });
 	} catch (error) {
-		console.log(error);
-		res.json({ success: false, message: error.message });
+		res.status(500).json({ message: "Internal server error" });
+		console.error(error);
 	}
 };
 
 export const logoutUser = (req, res) => {
 	res.clearCookie("token").status(200).json({ msg: "Logged out successfully" });
-	
 };
 
 //route for admin login

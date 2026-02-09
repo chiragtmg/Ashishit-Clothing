@@ -5,6 +5,7 @@ import connectDB from "./config/mongodb.js";
 import connectCloudinary from "./config/cloudinary.js";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import cookieParser from "cookie-parser";
 
 // App conifg
 const app = express();
@@ -14,6 +15,7 @@ connectCloudinary();
 
 // middlewares
 app.use(express.json()); //request passed to json
+app.use(cookieParser()); //used as pocket for token to store
 app.use(
 	cors({
 		origin: "http://localhost:5173",

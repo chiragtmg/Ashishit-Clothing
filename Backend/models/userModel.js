@@ -2,12 +2,15 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
 	{
-		name: { type: String, required: true },
+		username: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
 		cartData: { type: Object, default: {} },
 	},
-	{ minimze: false }
+	{ minimze: false },
+	{
+		timestamps: true, // helps to identify create and update time in mongo db
+	},
 ); //using minimize false to create empty object of cartdata when user is created
 
 const userModel = mongoose.model.user || mongoose.model("user", userSchema);
