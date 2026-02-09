@@ -1,13 +1,11 @@
 import { React, useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShopContext } from "../context/ShopContext";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 import { apiRequest } from "../Services/API";
 
 const Login = () => {
 	const [currentState, setCurrentState] = useState("Login");
-	const { token, setToken, backendUrl } = useContext(ShopContext);
 	const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
@@ -25,6 +23,7 @@ const Login = () => {
 					email,
 					password,
 				});
+
 				if (response.data.success) {
 					console.log(response.data);
 					setToken(response.data.token);

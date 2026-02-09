@@ -113,6 +113,7 @@ const registerUser = async (req, res) => {
 
 export const logoutUser = (req, res) => {
 	res.clearCookie("token").status(200).json({ msg: "Logged out successfully" });
+	
 };
 
 //route for admin login

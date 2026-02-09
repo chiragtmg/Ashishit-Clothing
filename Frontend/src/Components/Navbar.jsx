@@ -11,6 +11,7 @@ const Navbar = () => {
 
 	// Placeholder – replace with real cart logic (e.g. CartContext) later
 	const cartCount = 10;
+	console.log(currentUser);
 
 	const isActive = (path) => location.pathname === path;
 
@@ -122,7 +123,7 @@ const Navbar = () => {
 						{showProfileDropdown && (
 							<div className="absolute right-0 mt-4 w-52 bg-white shadow-xl rounded-lg border border-gray-200 py-2 z-50">
 								<Link
-									to="/profile"
+									to="/editProfile"
 									className="block px-5 py-3 text-sm text-gray-800 hover:bg-gray-50"
 									onClick={() => setShowProfileDropdown(false)}
 								>
