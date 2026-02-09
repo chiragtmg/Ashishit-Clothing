@@ -1,22 +1,26 @@
 import { React, useContext, useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
+import { apiRequest } from "../Services/API";
 
 const Login = () => {
 	const [currentState, setCurrentState] = useState("Login");
-	const {token, setToken, backendUrl } = useContext(ShopContext);
-
+	const { token, setToken, backendUrl } = useContext(ShopContext);
+	const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
 	const [email, setEmail] = useState("");
+
+	const { updateUser } = useContext(AuthContext);
+
 	const onSubmitHandler = async (event) => {
 		event.preventDefault();
 
 		try {
 			if (currentState === "Sign Up") {
-				const response = await axios.post(backendUrl + "/api/user/register", {
+				const response = await apiRequest.post("/auth/register", {
 					name,
 					email,
 					password,
@@ -30,7 +34,7 @@ const Login = () => {
 					toast.error(response.data.message);
 				}
 			} else {
-				const response = await axios.post(backendUrl + "/api/user/login", {
+				const response = await apiRequest.post("/auth/login", {
 					email,
 					password,
 				});
@@ -39,6 +43,8 @@ const Login = () => {
 					setToken(response.data.token);
 					toast.success("Login successfully");
 					localStorage.setItem("token", response.data.token);
+					updateUser(response.data);
+					navigate("/");
 				} else {
 					toast.error(response.data.message);
 				}

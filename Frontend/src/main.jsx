@@ -5,13 +5,16 @@ import App from "./App.jsx";
 import "./index.css";
 
 import ShopContextProvider from "./context/ShopContext";
+import { AuthContextProvider } from "./context/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
-		<ShopContextProvider>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
-		</ShopContextProvider>
-	</StrictMode>
+		<AuthContextProvider>
+			<ShopContextProvider>
+				<BrowserRouter>
+					<App />
+				</BrowserRouter>
+			</ShopContextProvider>
+		</AuthContextProvider>
+	</StrictMode>,
 );

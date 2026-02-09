@@ -1,85 +1,63 @@
-import { response } from "express";
-import validator from "validator";
-import userModel from "../models/userModel.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
 
-const createToken = (id) => {
-	return jwt.sign({ id }, process.env.JWT_SECRET);
-};
-
-// Route for the user login
-const loginUser = async (req, res) => {
+export const updateUser = async (req, res) => {
 	try {
-		const { email, password } = req.body;
+		const { id } = req.params; // to get data from id
+		const { username, email, avatar } = req.body;
 
-		const user = await userModel.findOne({ email });
-
+		// Check if user exists
+		const user = await User.findById(id);
 		if (!user) {
-			return res.json({ success: false, message: "User doesnot exist" });
+			return res.status(404).json({ message: "User not found" });
 		}
 
-		const isMatch = await bcrypt.compare(password, user.password);
-		if (isMatch) {
-			const token = createToken(user._id);
-			res.json({ success: true, token });
-		} else {
-			res.json({ success: false, message: "Invalid credentials" });
-		}
-	} catch (error) {
-		console.log(error);
-		res.json({ success: false, message: error.message });
-	}
-};
-
-//route for the user registration
-const registerUser = async (req, res) => {
-	try {
-		const { name, email, password } = req.body;
-
-		//for checking email exist or not
-		const exists = await userModel.findOne({ email });
-
-		if (exists) {
-			return res.json({ success: false, message: "User already exist" });
-		}
-
-		//validating email and strong password
-		if (!validator.isEmail(email)) {
-			return res.json({ success: false, message: "Use valid email" });
-		}
-		if (password.length < 8) {
-			return res.json({
-				success: false,
-				message: "Please enter a strong password",
-			});
-		}
-
-		//hasing for password
-		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(password, salt);
-
-		//creating new user
-		const newUser = new userModel({
-			name,
-			email,
-			password: hashedPassword,
+		// Check for duplicate username or email (excluding current user)
+		const existingUser = await User.findOne({
+			$and: [
+				{ _id: { $ne: id } }, // Exclude current user
+				{ $or: [{ email }, { username }] },
+			],
 		});
 
-		//saving in database
-		const user = await newUser.save();
+		if (existingUser) {
+			if (existingUser.email === email) {
+				return res.status(400).json({ message: "Email already exists" });
+			}
+			if (existingUser.username === username) {
+				return res.status(400).json({ message: "Username already exists" });
+			}
+		}
 
-		//creating token to use app
-		const token = createToken(user._id);
+		// Update user
+		const updatedUser = await User.findByIdAndUpdate(
+			id,
+			{
+				username,
+				email,
+				avatar,
+			},
+			{
+				new: true, // Return the updated document
+				runValidators: true, // Run schema validators
+			},
+		).select("-password"); // Exclude password from the response
 
-		res.json({ success: true, token });
+		res.status(200).json({
+			message: "User updated successfully",
+			data: updatedUser,
+		});
 	} catch (error) {
-		console.log(error);
-		res.json({ success: false, message: error.message });
+		console.error("Error updating user:", error);
+
+		if (error.name === "ValidationError") {
+			const errors = Object.values(error.errors).map((err) => err.message);
+			return res.status(400).json({ message: "Validation error", errors });
+		}
+
+		if (error.name === "CastError") {
+			return res.status(400).json({ message: "Invalid user ID" });
+		}
+
+		res.status(500).json({ message: "Internal server error" });
 	}
 };
-
-//route for admin login
-const adminLogin = async (req, res) => {};
-
-export { loginUser, registerUser, adminLogin };
