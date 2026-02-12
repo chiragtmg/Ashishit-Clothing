@@ -14,12 +14,7 @@ export const AuthContextProvider = ({ children }) => {
 	const updateUser = (data) => {
 		setCurrentUser(data);
 	};
-
-	// logout function
-	// const logout = () => {
-	// 	setCurrentUser(null);
-	// 	localStorage.removeItem("user");
-	// };
+	 
 
 	// logout for removing token also
 	const logout = async () => {

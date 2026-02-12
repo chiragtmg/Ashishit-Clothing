@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
 				avatar: user.avatar,
 				isAdmin: false,
 			},
-			process.env.JWT_SECRET,
+			process.env.JWT_SECRET_KEY,
 			{ expiresIn: age },
 		);
 

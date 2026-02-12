@@ -5,6 +5,7 @@ import connectDB from "./config/mongodb.js";
 import connectCloudinary from "./config/cloudinary.js";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 import cookieParser from "cookie-parser";
 
 // App conifg
@@ -26,6 +27,7 @@ app.use(
 //api end points
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/product", productRoutes);
 
 app.get("/", (req, res) => {
 	res.send("API WOrking");
