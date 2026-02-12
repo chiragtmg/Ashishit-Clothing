@@ -13,6 +13,7 @@ import Navbar from "./Components/Navbar";
 import { ToastContainer } from "react-toastify";
 import EditProfile from "./Pages/EditProfile";
 import SignUp from "./Pages/SignUp";
+import Footer from "./Components/Footer";
 
 const App = () => {
 	return (
@@ -32,6 +33,7 @@ const App = () => {
 				<Route path="/orders" element={<Orders />} />
 				<Route path="/editProfile" element={<EditProfile />} />
 			</Routes>
+			<Footer/>
 		</div>
 	);
 };
